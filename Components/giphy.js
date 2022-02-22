@@ -53,11 +53,10 @@ export default function Giphy() {
         params: {
           api_key: 'vf7nDm11F3X2Pe63jIGjWWPiFCFCZXM8',
           q: searchTerm,
-          limit: 10,
+          limit: 25,
         },
       });
       setGifs(results.data.data);
-      console.log(gifs);
     } catch (err) {
       setIsError(true);
       setTimeout(() => setIsError(false), 4000);
@@ -65,8 +64,6 @@ export default function Giphy() {
 
     setIsLoading(false);
   };
-
-  console.log(gifs);
 
   return (
     <div>
@@ -83,6 +80,7 @@ export default function Giphy() {
           return (
             <div key={gif.id}>
               <img src={gif.images.fixed_height.url} alt="a Gif" />
+              <div>Save</div>
             </div>
           );
         })}
