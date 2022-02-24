@@ -7,14 +7,31 @@ const gifList = css`
   justify-content: center;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   grid-gap: 0.5rem;
+  li {
+    list-style: none;
+  }
 `;
 
 export default function Giphy() {
   const [gifs, setGifs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [favGifs, setFavGifs] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  // if (typeof window !== 'undefined') {
+  //   localStorage.setItem('Favs', JSON.stringify(favGifs));
+  // }
+
+  const storedFavs = () => {
+    if (typeof window !== 'undefined') {
+      const stored = JSON.parse(localStorage.getItem('Favs'));
+      return stored;
+    }
+  };
+
+  const localgifs = storedFavs() || [];
+  // // console.log(localgifs);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +44,6 @@ export default function Giphy() {
             api_key: 'vf7nDm11F3X2Pe63jIGjWWPiFCFCZXM8',
           },
         });
-        console.log(results);
         setGifs(results.data.data);
       } catch (err) {
         setIsError(true);
@@ -65,6 +81,23 @@ export default function Giphy() {
     setIsLoading(false);
   };
 
+  function addFavourite(gif) {
+    setFavGifs((prev) => [...prev, gif]);
+  }
+
+  function deleteGif(gif) {
+    const deletedId = gif.id;
+    const updateFavs = favGifs.filter((g) => g.id !== deletedId);
+    setFavGifs(updateFavs);
+  }
+  useEffect(() => {
+    setFavGifs(JSON.parse(window.localStorage.getItem('Favs')));
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('Favs', JSON.stringify(favGifs));
+  }, [favGifs]);
+
   return (
     <div>
       <form>
@@ -75,16 +108,38 @@ export default function Giphy() {
         />
         <button onClick={handleSubmit}>Search</button>
       </form>
-      <div css={gifList}>
+      <ul css={gifList}>
         {gifs.map((gif) => {
           return (
-            <div key={gif.id}>
+            <li key={gif.id}>
               <img src={gif.images.fixed_height.url} alt="a Gif" />
-              <div>Save</div>
-            </div>
+              <button
+                onClick={() => {
+                  addFavourite(gif);
+                }}
+              >
+                Save
+              </button>
+            </li>
           );
         })}
-      </div>
+      </ul>
+      <ul css={gifList}>
+        {localgifs.map((favs) => {
+          return (
+            <li key={`favs-li-${favs.id}`}>
+              <img src={favs.images.fixed_height.url} alt="a Gif" />
+              <button
+                onClick={() => {
+                  deleteGif(favs);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
