@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { apikey } from '../key';
 
 const gifList = css`
   display: grid;
@@ -16,7 +17,6 @@ export default function Giphy() {
   const [gifs, setGifs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [favGifs, setFavGifs] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   // if (typeof window !== 'undefined') {
@@ -36,12 +36,11 @@ export default function Giphy() {
   useEffect(() => {
     const fetchData = async () => {
       setIsError(false);
-      setIsLoading(true);
 
       try {
         const results = await axios('https://api.giphy.com/v1/gifs/trending', {
           params: {
-            api_key: 'vf7nDm11F3X2Pe63jIGjWWPiFCFCZXM8',
+            api_key: apikey,
           },
         });
         setGifs(results.data.data);
@@ -49,8 +48,6 @@ export default function Giphy() {
         setIsError(true);
         setTimeout(() => setIsError(false), 4000);
       }
-
-      setIsLoading(false);
     };
     fetchData();
   }, []);
@@ -62,12 +59,11 @@ export default function Giphy() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsError(false);
-    setIsLoading(true);
 
     try {
       const results = await axios('https://api.giphy.com/v1/gifs/search', {
         params: {
-          api_key: 'vf7nDm11F3X2Pe63jIGjWWPiFCFCZXM8',
+          api_key: apikey,
           q: searchTerm,
           limit: 25,
         },
@@ -77,8 +73,6 @@ export default function Giphy() {
       setIsError(true);
       setTimeout(() => setIsError(false), 4000);
     }
-
-    setIsLoading(false);
   };
 
   function addFavourite(gif) {
