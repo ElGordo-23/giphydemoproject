@@ -1,13 +1,21 @@
 import { css } from '@emotion/react';
 
-const pageNumberStyles = css`
-  list-style: none;
-  float: left;
-  li.hover {
-    text-decoration: underline;
+const paginationStyle = css`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  select {
+    position: fixed;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    margin-left: 35px;
+    li {
+      display: inline;
+    }
   }
 `;
-
 export default function Paginate(props) {
   const pageNumber = [];
 
@@ -19,8 +27,8 @@ export default function Paginate(props) {
     pageNumber.push(i);
   }
   return (
-    <nav>
-      <ul css={pageNumberStyles}>
+    <nav css={paginationStyle}>
+      <ul>
         {pageNumber.map((number) => {
           return (
             <li key="page-number">
@@ -31,6 +39,15 @@ export default function Paginate(props) {
           );
         })}
       </ul>
+      <select
+        type="number"
+        placeholder="10"
+        onChange={(e) => props.itemsPerPage(e.currentTarget.value)}
+      >
+        <option>10</option>
+        <option>25</option>
+        <option>50</option>
+      </select>
     </nav>
   );
 }
