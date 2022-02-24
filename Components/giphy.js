@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { apikey } from '../key';
+import Paginate from './pagination';
 
 const gifList = css`
   display: grid;
@@ -18,20 +19,12 @@ export default function Giphy() {
   const [searchTerm, setSearchTerm] = useState('');
   const [favGifs, setFavGifs] = useState([]);
   const [isError, setIsError] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [gifsPerPage, setGifsPerPage] = useState(10);
 
-  // if (typeof window !== 'undefined') {
-  //   localStorage.setItem('Favs', JSON.stringify(favGifs));
-  // }
-
-  const storedFavs = () => {
-    if (typeof window !== 'undefined') {
-      const stored = JSON.parse(localStorage.getItem('Favs'));
-      return stored;
-    }
-  };
-
-  const localgifs = storedFavs() || [];
-  // // console.log(localgifs);
+  const indexOfLastGif = currentPage * gifsPerPage;
+  const indexOfFirstGif = indexOfLastGif - gifsPerPage;
+  const currentGifs = gifs.slice(indexOfFirstGif, indexOfLastGif);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +34,7 @@ export default function Giphy() {
         const results = await axios('https://api.giphy.com/v1/gifs/trending', {
           params: {
             api_key: apikey,
+            limt: 500,
           },
         });
         setGifs(results.data.data);
@@ -52,10 +46,6 @@ export default function Giphy() {
     fetchData();
   }, []);
 
-  const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsError(false);
@@ -65,7 +55,7 @@ export default function Giphy() {
         params: {
           api_key: apikey,
           q: searchTerm,
-          limit: 25,
+          limit: 500,
         },
       });
       setGifs(results.data.data);
@@ -84,26 +74,38 @@ export default function Giphy() {
     const updateFavs = favGifs.filter((g) => g.id !== deletedId);
     setFavGifs(updateFavs);
   }
-  useEffect(() => {
-    setFavGifs(JSON.parse(window.localStorage.getItem('Favs')));
-  }, []);
 
-  useEffect(() => {
-    window.localStorage.setItem('Favs', JSON.stringify(favGifs));
-  }, [favGifs]);
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
+  const renderError = () => {
+    if (isError) {
+      return <div>Error fetching data.</div>;
+    }
+  };
+  function pageSelected(pageNumber) {
+    setCurrentPage(pageNumber);
+  }
   return (
     <div>
+      {renderError()}
       <form>
         <input
           value={searchTerm}
           placeholder="Search"
-          onChange={handleSearchChange}
+          onChange={handleSearch}
         />
         <button onClick={handleSubmit}>Search</button>
       </form>
+      <Paginate
+        pageSelected={pageSelected}
+        currentPage={currentPage}
+        gifsPerPage={gifsPerPage}
+        totalNumberOfGifs={gifs.length}
+      />
       <ul css={gifList}>
-        {gifs.map((gif) => {
+        {currentGifs.map((gif) => {
           return (
             <li key={gif.id}>
               <img src={gif.images.fixed_height.url} alt="a Gif" />
@@ -119,7 +121,7 @@ export default function Giphy() {
         })}
       </ul>
       <ul css={gifList}>
-        {localgifs.map((favs) => {
+        {favGifs.map((favs) => {
           return (
             <li key={`favs-li-${favs.id}`}>
               <img src={favs.images.fixed_height.url} alt="a Gif" />
