@@ -3,7 +3,7 @@ import { css } from '@emotion/react';
 const paginationStyle = css`
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 20px;
   select {
     position: fixed;
   }
@@ -11,8 +11,18 @@ const paginationStyle = css`
     list-style: none;
     margin: 0;
     margin-left: 35px;
+    display: flex;
+    gap: 5px;
     li {
       display: inline;
+      text-decoration: none;
+      a {
+        text-decoration: none;
+        color: black;
+        :hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 `;

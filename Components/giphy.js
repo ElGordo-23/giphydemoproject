@@ -12,6 +12,7 @@ const gifList = css`
   grid-gap: 0.5rem;
   li {
     list-style: none;
+    max-width: 210px;
   }
 `;
 
@@ -39,24 +40,42 @@ const controlsWrapper = css`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-left: 10%;
+  button {
+    display: inline-block;
+    border: 0.1em solid #ffffff;
+    padding: 0.35em 1.2em;
+    margin-top: 10px;
+    width: 100px;
+    background-color: black;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+  }
 `;
 const allGifsWrapper = css`
   overflow: scroll;
   height: 500px;
-  /* border: 5px solid black; */
+  border: 5px solid black;
   padding: 15px;
   margin-right: 10px;
   width: 45%;
 `;
 const favGifsWrapper = css`
+  .favsWrapper {
+    display: flex;
+    flex-direction: column;
+    width: 600px;
+    align-items: center;
+  }
   overflow: scroll;
   height: 500px;
   width: 45%px;
-  /* border: 5px solid black; */
+  border: 5px solid black;
   padding: 15px;
   margin-left: 10px;
-
   position: relative;
+  margin-right: 10%;
 `;
 
 const leftSideWrapper = css`
@@ -73,8 +92,7 @@ export default function Giphy() {
   const [isError, setIsError] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [gifsPerPage, setGifsPerPage] = useState(10);
-
-  console.log(gifs);
+  const [reset, setReset] = useState(false);
 
   const indexOfLastGif = currentPage * gifsPerPage;
   const indexOfFirstGif = indexOfLastGif - gifsPerPage;
@@ -98,7 +116,7 @@ export default function Giphy() {
       }
     };
     fetchData();
-  }, []);
+  }, [reset]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -147,6 +165,10 @@ export default function Giphy() {
     setGifsPerPage(counter);
   }
 
+  function resetSearch() {
+    setReset(!reset);
+  }
+
   return (
     <div css={containerMain}>
       <div css={controlsWrapper}>
@@ -159,6 +181,8 @@ export default function Giphy() {
           />
           <button onClick={handleSubmit}>Search</button>
           <button onClick={() => setFavGifs([])}>Clear Favs</button>
+          <br />
+          <button onClick={() => resetSearch()}>Reset Search</button>
         </form>
         <Paginate
           pageSelected={pageSelected}
@@ -186,20 +210,22 @@ export default function Giphy() {
         </ul>
       </div>
       <div css={favGifsWrapper}>
-        <ul css={gifList}>
-          {favGifs.map((favs) => {
-            return (
-              <li key={`favs-li-${favs.id}`}>
-                <img src={favs.images.fixed_width.url} alt="a Gif" />
-                <MdDelete
-                  onClick={() => {
-                    deleteGif(favs);
-                  }}
-                />
-              </li>
-            );
-          })}
-        </ul>
+        <div className="favsWrapper">
+          <ul css={gifList}>
+            {favGifs.map((favs) => {
+              return (
+                <li key={`favs-li-${favs.id}`}>
+                  <img src={favs.images.fixed_width.url} alt="a Gif" />
+                  <MdDelete
+                    onClick={() => {
+                      deleteGif(favs);
+                    }}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </div>
   );
