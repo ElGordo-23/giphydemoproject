@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { MdDelete, MdFavorite } from 'react-icons/md';
 import { apikey } from '../key';
@@ -18,6 +19,8 @@ const gifList = css`
 
 const heartStyle = css`
   color: black;
+  left: 90px;
+  position: relative;
   :hover {
     transition: 0.5s ease-in;
     color: red;
@@ -78,13 +81,6 @@ const favGifsWrapper = css`
   margin-right: 10%;
 `;
 
-const leftSideWrapper = css`
-  display: flex;
-  flex-direction: column;
-  width: 600px;
-  align-items: center;
-`;
-
 export default function Giphy() {
   const [gifs, setGifs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -97,6 +93,8 @@ export default function Giphy() {
   const indexOfLastGif = currentPage * gifsPerPage;
   const indexOfFirstGif = indexOfLastGif - gifsPerPage;
   const currentGifs = gifs.slice(indexOfFirstGif, indexOfLastGif);
+
+  console.log(favGifs);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -169,6 +167,14 @@ export default function Giphy() {
     setReset(!reset);
   }
 
+  function download() {
+    favGifs.forEach((element) =>
+      saveAs(` ${element.bitly_url} `, ` ${element.title} `),
+    );
+  }
+
+  // Download wird von Giphy-API verhindert. Bleibt im Code for future reference.
+
   return (
     <div css={containerMain}>
       <div css={controlsWrapper}>
@@ -176,13 +182,14 @@ export default function Giphy() {
         <form>
           <input
             value={searchTerm}
-            placeholder="Search"
+            placeholder="Search Gifs"
             onChange={handleSearch}
           />
           <button onClick={handleSubmit}>Search</button>
           <button onClick={() => setFavGifs([])}>Clear Favs</button>
           <br />
           <button onClick={() => resetSearch()}>Reset Search</button>
+          <button onClick={() => download()}>Download all Favs</button>
         </form>
         <Paginate
           pageSelected={pageSelected}

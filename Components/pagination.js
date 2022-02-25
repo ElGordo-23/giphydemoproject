@@ -26,6 +26,7 @@ const paginationStyle = css`
     }
   }
 `;
+
 export default function Paginate(props) {
   const pageNumber = [];
 
