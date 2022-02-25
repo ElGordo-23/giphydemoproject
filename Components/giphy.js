@@ -2,7 +2,6 @@ import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { MdDelete, MdFavorite } from 'react-icons/md';
-import { apikey } from '../key';
 import {
   allGifsWrapper,
   containerMain,
@@ -35,7 +34,7 @@ export default function Giphy() {
       try {
         const results = await axios('https://api.giphy.com/v1/gifs/trending', {
           params: {
-            api_key: apikey,
+            api_key: 'vf7nDm11F3X2Pe63jIGjWWPiFCFCZXM8',
             limit: 50,
           },
         });
@@ -55,7 +54,7 @@ export default function Giphy() {
     try {
       const results = await axios('https://api.giphy.com/v1/gifs/search', {
         params: {
-          api_key: apikey,
+          api_key: 'vf7nDm11F3X2Pe63jIGjWWPiFCFCZXM8',
           q: searchTerm,
           limit: 50,
         },
