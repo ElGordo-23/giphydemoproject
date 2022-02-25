@@ -1,85 +1,17 @@
-import { css } from '@emotion/react';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { MdDelete, MdFavorite } from 'react-icons/md';
 import { apikey } from '../key';
+import {
+  allGifsWrapper,
+  containerMain,
+  controlsWrapper,
+  favGifsWrapper,
+  gifList,
+  heartStyle,
+} from '../styles';
 import Paginate from './pagination';
-
-const gifList = css`
-  display: grid;
-  justify-content: center;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  grid-gap: 0.5rem;
-  li {
-    list-style: none;
-    max-width: 210px;
-  }
-`;
-
-const heartStyle = css`
-  color: black;
-  left: 90px;
-  position: relative;
-  :hover {
-    transition: 0.5s ease-in;
-    color: red;
-  }
-  :active {
-    transform: translateY(-10px);
-  }
-`;
-const containerMain = css`
-  display: flex;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  flex-direction: row;
-  justify-content: space-between;
-  top: 100px;
-  max-width: 1500px;
-`;
-const controlsWrapper = css`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-left: 10%;
-  button {
-    display: inline-block;
-    border: 0.1em solid #ffffff;
-    padding: 0.35em 1.2em;
-    margin-top: 10px;
-    width: 100px;
-    background-color: black;
-    color: white;
-    text-align: center;
-    cursor: pointer;
-  }
-`;
-const allGifsWrapper = css`
-  overflow: scroll;
-  height: 500px;
-  border: 5px solid black;
-  padding: 15px;
-  margin-right: 10px;
-  width: 45%;
-`;
-const favGifsWrapper = css`
-  .favsWrapper {
-    display: flex;
-    flex-direction: column;
-    width: 600px;
-    align-items: center;
-  }
-  overflow: scroll;
-  height: 500px;
-  width: 45%px;
-  border: 5px solid black;
-  padding: 15px;
-  margin-left: 10px;
-  position: relative;
-  margin-right: 10%;
-`;
 
 export default function Giphy() {
   const [gifs, setGifs] = useState([]);
